@@ -1,0 +1,54 @@
+region      = "eu-west-1"
+environment = "dev"
+project     = "conduit"
+owner       = "platform"
+
+vpc_cidr                = "10.20.0.0/16"
+availability_zone_count = 2
+
+# One NAT gateway is enough for dev. Use "per_az" where egress must survive the
+# loss of a single availability zone.
+nat_gateway_strategy = "single"
+
+kubernetes_version = "1.31"
+
+# Replace with the operator networks that need kubectl access.
+eks_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+
+eks_node_groups = {
+  default = {
+    instance_types = ["t3.large"]
+    desired_size   = 2
+    min_size       = 2
+    max_size       = 4
+  }
+}
+
+# e.g. ["arn:aws:iam::111122223333:role/PlatformEngineer"]
+cluster_admin_principals = []
+
+db_instance_class        = "db.t4g.micro"
+db_engine_version        = "16.6"
+db_multi_az              = false
+db_backup_retention_days = 7
+# Demo environment: both are set so the stack can be destroyed cleanly.
+db_deletion_protection   = false
+db_skip_final_snapshot   = true
+
+# ECR repositories still holding demo images must be removable at teardown.
+ecr_force_delete = true
+
+github_repositories = [
+  "your-org/react-vite-frontend",
+  "your-org/express-postgresql-backend",
+]
+github_deploy_ref = "refs/heads/main"
+
+# From the bootstrap output oidc_provider_arn.
+github_oidc_provider_arn = "arn:aws:iam::111122223333:oidc-provider/token.actions.githubusercontent.com"
+
+alarm_email_subscriptions = []
+
+# The ALB is created by the in-cluster controller. Set this on a later apply if
+# you want the load balancer alarms attached; the demo does not require it.
+ingress_load_balancer_arn_suffix = ""

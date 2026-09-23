@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: conduit
+
+resources:
+  - ../../base
+
+# Registry and tag are rewritten by the deployment workflow with the immutable
+# digest-bearing tag it just pushed.
+images:
+  - name: backend
+    newName: conduit/backend
+    newTag: latest
+  - name: backend-migrator
+    newName: conduit/backend
+    newTag: latest-migrator
+  - name: frontend
+    newName: conduit/frontend
+    newTag: latest
+
+patches:
+  - path: patch-config.yaml
+  - path: patch-external-secret.yaml
+

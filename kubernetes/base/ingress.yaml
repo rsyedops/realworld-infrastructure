@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conduit
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # IP mode targets pods directly, so the ALB honours pod readiness instead of
+    # load balancing to a node that may not host a ready replica.
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    # One health check serves both target groups: it is a real endpoint on the
+    # API, and the SPA's catch-all returns the shell for it. The backend has no
+    # dedicated health route, and adding one would mean changing the application.
+    alb.ingress.kubernetes.io/healthcheck-path: /api/tags
+spec:
+  ingressClassName: alb
+  rules:
+    # No host rule: the demo is reached on the ALB's generated hostname.
+    - http:
+        paths:
+          # Longest-prefix first: the SPA catch-all must not shadow the API.
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
+          - path: /images
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  name: http

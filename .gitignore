@@ -1,0 +1,17 @@
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Terraform
+.terraform/
+# Child modules get a lock file only when initialised for validation; Terraform
+# resolves providers from the root module, so only environments/ keeps one.
+terraform/modules/*/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+backend.hcl
+terraform.tfvars
+!terraform.tfvars.example

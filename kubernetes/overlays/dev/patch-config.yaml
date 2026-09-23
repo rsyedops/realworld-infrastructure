@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  # Empty on purpose: the API returns relative URLs for default avatars, which
+  # resolve against whatever hostname the ALB was given. Nothing has to know the
+  # load balancer's address at deploy time.
+  PUBLIC_URL: ""

@@ -1,0 +1,8 @@
+region                    = "eu-west-1"
+project                   = "conduit"
+state_bucket_name         = "conduit-tfstate-CHANGE-ME-12345"
+infrastructure_repository = "your-org/infrastructure"
+deploy_ref                = "refs/heads/main"
+
+# Set false if the account already has a GitHub Actions OIDC provider.
+create_oidc_provider = true

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  NODE_ENV: production
+  PORT: "3000"
+  JWT_ISSUER: conduit
+  JWT_EXP: "86400"
+  PUBLIC_URL: ""
