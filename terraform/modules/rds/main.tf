@@ -123,6 +123,7 @@ resource "aws_iam_role_policy_attachment" "monitoring" {
 
 # Pre-created so exported logs inherit a retention policy instead of being kept
 # forever.
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "postgresql" {
   for_each = toset(["postgresql", "upgrade"])
 
@@ -132,6 +133,11 @@ resource "aws_cloudwatch_log_group" "postgresql" {
   tags = var.tags
 }
 
+# IAM database authentication is off because the application connects with the
+# RDS managed password from Secrets Manager. Turning it on would mean the pods
+# minting short lived tokens instead, which is a better model but a change to
+# how the application connects.
+#tfsec:ignore:AVD-AWS-0176
 resource "aws_db_instance" "this" {
   identifier = var.name
 

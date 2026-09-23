@@ -83,11 +83,15 @@ data "aws_iam_policy_document" "deploy" {
 
   # The deploy step reads the database endpoint and the ARN of the RDS-managed
   # secret so the manifests need no account-specific values committed.
-  statement {
-    sid       = "RdsDiscovery"
-    effect    = "Allow"
-    actions   = ["rds:DescribeDBInstances"]
-    resources = ["*"]
+  dynamic "statement" {
+    for_each = length(var.rds_instance_arns) > 0 ? [1] : []
+
+    content {
+      sid       = "RdsDiscovery"
+      effect    = "Allow"
+      actions   = ["rds:DescribeDBInstances"]
+      resources = var.rds_instance_arns
+    }
   }
 
   # Only enough to assemble a kubeconfig. What the role may do inside the cluster

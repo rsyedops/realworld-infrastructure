@@ -5,10 +5,14 @@
 data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 
+# Access logging is skipped on purpose. It needs a second bucket to receive the
+# logs, and the only writer here is the pipeline role, whose activity is already
+# recorded in CloudTrail.
+#tfsec:ignore:aws-s3-enable-bucket-logging
 resource "aws_s3_bucket" "state" {
   bucket = var.state_bucket_name
 
-  # The demo is meant to be torn down; the pipeline state is reproducible.
+  # The demo is meant to be torn down, and the pipeline state is reproducible.
   force_destroy = true
 }
 
@@ -20,6 +24,10 @@ resource "aws_s3_bucket_versioning" "state" {
   }
 }
 
+# SSE-S3 rather than a customer managed key. A KMS key here would have to exist
+# before the bucket that holds the state describing it, which is the kind of
+# ordering problem bootstrap code should not have.
+#tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket_server_side_encryption_configuration" "state" {
   bucket = aws_s3_bucket.state.id
 

@@ -1,3 +1,6 @@
+# Repositories use the ECR default encryption. kms_key_arn switches them to a
+# customer managed key where an account requires it.
+#tfsec:ignore:aws-ecr-repository-customer-key
 resource "aws_ecr_repository" "this" {
   for_each = toset(var.repositories)
 

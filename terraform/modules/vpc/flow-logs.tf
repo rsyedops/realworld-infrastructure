@@ -1,5 +1,6 @@
 # Rejected traffic only: it is the signal that matters for spotting
 # misconfigured security groups, at a fraction of the volume of ALL.
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "flow_logs" {
   count = var.flow_logs_enabled ? 1 : 0
 

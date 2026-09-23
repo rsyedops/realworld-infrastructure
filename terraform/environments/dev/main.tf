@@ -93,6 +93,7 @@ module "github_oidc" {
   ]
 
   ecr_repository_arns = values(module.ecr.repository_arns)
+  rds_instance_arns   = [module.rds.instance_arn]
   eks_cluster_arns    = ["arn:${data.aws_partition.current.partition}:eks:${var.region}:${data.aws_caller_identity.current.account_id}:cluster/${local.name}"]
 
   tags = local.common_tags

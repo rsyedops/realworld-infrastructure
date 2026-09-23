@@ -1,6 +1,13 @@
 # Scoped by service and, where the API supports it, by resource. Terraform needs
 # broad verbs inside each service because it creates and destroys whole stacks,
 # but it has no access to services this project does not use.
+#
+# The wildcard warnings below are accepted deliberately. A role that provisions a
+# VPC, a cluster and a database cannot be written without service level verbs,
+# and most of the create APIs involved do not support resource level scoping at
+# all. The parts that can be narrowed are: state access is limited to one bucket,
+# and role management is limited to names beginning with the project prefix.
+#tfsec:ignore:aws-iam-no-policy-wildcards
 data "aws_iam_policy_document" "terraform" {
   statement {
     sid    = "State"

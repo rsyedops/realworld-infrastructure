@@ -38,10 +38,18 @@ jobs:
         working-directory: terraform/environments/dev
         run: terraform validate
 
+      # Pointed at each root separately. Given the parent directory tfsec stops at
+      # the first root it finds, which silently skipped everything under
+      # environments and modules.
       - name: Static analysis
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
-          working_directory: terraform
+          working_directory: terraform/environments/dev
+
+      - name: Static analysis (bootstrap)
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: terraform/bootstrap
 
   plan:
     needs: validate

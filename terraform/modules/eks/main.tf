@@ -72,6 +72,10 @@ resource "aws_vpc_security_group_egress_rule" "cluster_all" {
 
 # Created ahead of the cluster so retention applies from the first log event; EKS
 # would otherwise create this group with no expiry.
+# Log groups use the CloudWatch default encryption. A customer managed key adds
+# a key to run and pay for without changing who can read these logs, which is
+# already controlled by IAM.
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "cluster" {
   name              = "/aws/eks/${var.name}/cluster"
   retention_in_days = var.control_plane_log_retention_days
@@ -79,6 +83,13 @@ resource "aws_cloudwatch_log_group" "cluster" {
   tags = var.tags
 }
 
+# The API server stays reachable from the internet because the deployment
+# pipeline runs on GitHub hosted runners, which have no route into the VPC.
+# Narrowing endpoint_public_access_cidrs is the first thing to do for anything
+# longer lived than this demo, and a self hosted runner would remove the need
+# for a public endpoint altogether.
+#tfsec:ignore:aws-eks-no-public-cluster-access
+#tfsec:ignore:aws-eks-no-public-cluster-access-to-cidr
 resource "aws_eks_cluster" "this" {
   name     = var.name
   role_arn = aws_iam_role.cluster.arn

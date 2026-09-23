@@ -1,4 +1,4 @@
-# Conduit — deployment infrastructure
+# Conduit deployment infrastructure
 
 Continuous delivery setup for a RealWorld (Conduit) application on AWS.
 
@@ -42,7 +42,7 @@ application repositories, under `.github/workflows/`.
       /api, /images ────────┼──────── / (everything else)
                             │
   ╔═════════════════════════▼══════════════════════════╗
-  ║ EKS — managed node groups in private subnets       ║
+  ║ EKS, managed node groups in private subnets        ║
   ║                                                    ║
   ║   ┌──────────────┐          ┌──────────────┐       ║
   ║   │ backend pods │          │ frontend pods│       ║
@@ -192,8 +192,8 @@ already available. Once the application exports RED metrics of its own,
 `kube-prometheus-stack` is the right answer.
 
 **Probes work with the application as it is.** The API has no health route, so
-liveness is a TCP check — it stays up during a database outage and does not
-restart every pod on top of an RDS incident — and readiness is `GET /api/tags`,
+liveness is a TCP check. It stays up during a database outage so an RDS
+incident does not restart every pod on top of it. Readiness is `GET /api/tags`,
 the cheapest route that returns 200 only when a query succeeds.
 
 **One health check path for both target groups.** The ALB applies its
@@ -209,7 +209,7 @@ failed migration stops the release with the previous version still serving.
 ## Security
 
 - RDS is in private subnets, `publicly_accessible = false`, and its security
-  group has no CIDR ingress rule at all — only a reference to the cluster's
+  group has no CIDR ingress rule at all, only a reference to the cluster's
   security group.
 - Nodes are in private subnets; egress is via NAT. An S3 gateway endpoint keeps
   ECR layer pulls off the NAT gateways.
@@ -227,7 +227,7 @@ failed migration stops the release with the previous version still serving.
 
 ## Scalability and fault tolerance
 
-HPA scales the backend 2–10 and the frontend 2–6 on CPU. The Deployments declare
+HPA scales the backend 2 to 10 and the frontend 2 to 6 on CPU. The Deployments declare
 no `replicas`, so an apply never resets a scaled-out service back to its
 baseline. Cluster Autoscaler handles nodes.
 
@@ -257,7 +257,7 @@ inherit the instance KMS key, `copy_tags_to_snapshot` is on, and
 `delete_automated_backups` is off so they survive the instance.
 
 RPO is roughly five minutes, set by transaction log shipping. Restoring into a
-new instance takes 30–60 minutes; a Multi-AZ failover is 1–2 minutes and needs no
+new instance takes 30 to 60 minutes. A Multi-AZ failover is 1 to 2 minutes and needs no
 operator action. Restores always create a new instance:
 
 ```bash
@@ -280,8 +280,8 @@ preserving.
 
 **Nothing has been provisioned.** `terraform apply` has never been run and no
 cluster exists. Terraform validates and the manifests pass strict schema
-validation, but anything that only fails at admission time — CRD availability,
-controller behaviour, ALB provisioning, the OIDC trust path — is unverified.
+validation, but anything that only fails at admission time is unverified: CRD
+availability, controller behaviour, ALB provisioning, the OIDC trust path.
 `terraform plan` needs credentials and a state bucket, neither of which is
 configured here.
 
@@ -290,7 +290,7 @@ restarting Postgres under the running stack: `pg-pool` emits an `error` event
 that nothing handles, and Node exits. This fires on RDS failover and maintenance,
 and every replica holds idle connections, so they all exit together. The restart
 policy recovers it within seconds, which is why it was left alone rather than
-patched into application code, but the real fix is four lines — construct the
+patched into application code, but the real fix is four lines: construct the
 pool explicitly and attach a handler.
 
 **No caching tier.** The brief lists caching as an example tier. Nothing here
@@ -328,10 +328,10 @@ The backend needed none.
 
 The frontend needed two, both required to deploy it at all:
 
-- `src/main.jsx` — the API base URL was a hard-coded literal pointing at the
+- `src/main.jsx`. The API base URL was a hard-coded literal pointing at the
   public RealWorld demo API. It now reads `VITE_API_URL`, falling back to the
   original value, so a deployed frontend can reach this backend.
-- `index.html` and `public/main.css` — the Conduit theme was loaded from
+- `index.html` and `public/main.css`. The Conduit theme was loaded from
   `demo.productionready.io`, which now returns 404, so the deployed site rendered
   unstyled. The stylesheet is vendored and served with the application.
 

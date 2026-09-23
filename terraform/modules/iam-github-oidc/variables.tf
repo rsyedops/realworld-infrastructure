@@ -51,6 +51,12 @@ variable "eks_cluster_arns" {
   default     = []
 }
 
+variable "rds_instance_arns" {
+  description = "Database instances the deploy step may describe when resolving the endpoint. Empty omits the permission."
+  type        = list(string)
+  default     = []
+}
+
 variable "max_session_duration" {
   description = "Maximum session length in seconds."
   type        = number

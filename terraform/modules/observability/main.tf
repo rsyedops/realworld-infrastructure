@@ -1,7 +1,13 @@
 data "aws_partition" "current" {}
 
+#tfsec:ignore:AVD-AWS-0136
 resource "aws_sns_topic" "alarms" {
   name = "${var.name}-alarms"
+
+  # The AWS managed key is enough here. Alarm notifications carry no data beyond
+  # a metric name and a threshold, so a customer managed key would add a key to
+  # run without protecting anything sensitive.
+  kms_master_key_id = "alias/aws/sns"
 
   tags = var.tags
 }
@@ -65,6 +71,7 @@ resource "aws_eks_addon" "cloudwatch_observability" {
 
 # The addon creates this group on first write; declaring it here attaches a
 # retention policy so container logs do not accumulate indefinitely.
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "application" {
   name              = "/aws/containerinsights/${var.cluster_name}/application"
   retention_in_days = var.application_log_retention_days

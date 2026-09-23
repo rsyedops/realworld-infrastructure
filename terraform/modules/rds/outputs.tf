@@ -37,3 +37,8 @@ output "kms_key_arn" {
   description = "KMS key encrypting storage, snapshots and the master secret."
   value       = aws_kms_key.storage.arn
 }
+
+output "instance_arn" {
+  description = "ARN of the instance."
+  value       = aws_db_instance.this.arn
+}
