@@ -24,6 +24,26 @@ variable "infrastructure_repository" {
   }
 }
 
+variable "infrastructure_owner_id" {
+  description = "Numeric GitHub account ID of the repository owner. Appears in the OIDC subject as owner@id."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9]+$", var.infrastructure_owner_id))
+    error_message = "infrastructure_owner_id must be numeric."
+  }
+}
+
+variable "infrastructure_repository_id" {
+  description = "Numeric GitHub repository ID. Appears in the OIDC subject as name@id."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9]+$", var.infrastructure_repository_id))
+    error_message = "infrastructure_repository_id must be numeric."
+  }
+}
+
 variable "deploy_environment" {
   description = "GitHub Environment whose jobs may assume the Terraform role. A job that declares this environment receives an OIDC subject of repo:<owner>/<name>:environment:<value>."
   type        = string

@@ -63,6 +63,14 @@ data "aws_iam_openid_connect_provider" "existing" {
 
 locals {
   oidc_provider_arn = var.create_oidc_provider ? aws_iam_openid_connect_provider.github[0].arn : data.aws_iam_openid_connect_provider.existing[0].arn
+
+  owner_name = split("/", var.infrastructure_repository)[0]
+  repo_name  = split("/", var.infrastructure_repository)[1]
+
+  # GitHub issues subjects carrying the immutable numeric IDs of the account and
+  # the repository, so that renaming either one cannot quietly transfer this
+  # trust to a different repository.
+  oidc_subject = "repo:${local.owner_name}@${var.infrastructure_owner_id}/${local.repo_name}@${var.infrastructure_repository_id}:environment:${var.deploy_environment}"
 }
 
 data "aws_iam_policy_document" "assume" {
@@ -84,7 +92,7 @@ data "aws_iam_policy_document" "assume" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.infrastructure_repository}:environment:${var.deploy_environment}"]
+      values   = [local.oidc_subject]
     }
   }
 }
