@@ -24,10 +24,10 @@ variable "infrastructure_repository" {
   }
 }
 
-variable "deploy_ref" {
-  description = "Git ref allowed to assume the Terraform role."
+variable "deploy_environment" {
+  description = "GitHub Environment whose jobs may assume the Terraform role. A job that declares this environment receives an OIDC subject of repo:<owner>/<name>:environment:<value>."
   type        = string
-  default     = "refs/heads/main"
+  default     = "dev"
 }
 
 variable "create_oidc_provider" {

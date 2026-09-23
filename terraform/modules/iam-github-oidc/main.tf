@@ -33,10 +33,10 @@ data "aws_iam_policy_document" "assume" {
       values   = ["sts.amazonaws.com"]
     }
 
-    # StringLike so branch and environment patterns can be expressed, but the
-    # repository is always pinned.
+    # Exact match. Every subject names a repository and the environment its jobs
+    # must be running under, so there is nothing to wildcard.
     condition {
-      test     = "StringLike"
+      test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
       values   = var.subjects
     }

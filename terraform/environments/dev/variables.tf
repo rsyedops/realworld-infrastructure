@@ -145,10 +145,10 @@ variable "github_oidc_provider_arn" {
   type        = string
 }
 
-variable "github_deploy_ref" {
-  description = "Git ref allowed to assume the deployment role."
+variable "github_deploy_environment" {
+  description = "GitHub Environment whose jobs may assume the application deployment role."
   type        = string
-  default     = "refs/heads/main"
+  default     = "dev"
 }
 
 variable "ecr_force_delete" {

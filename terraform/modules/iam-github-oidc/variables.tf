@@ -22,9 +22,10 @@ variable "oidc_provider_arn" {
 
 variable "subjects" {
   description = <<-EOT
-    GitHub OIDC subject claims allowed to assume the role, e.g.
-    "repo:acme/backend:ref:refs/heads/main" or "repo:acme/backend:environment:production".
-    Wildcarding the ref lets any branch deploy, so keep these specific.
+      GitHub OIDC subject claims allowed to assume the role, matched exactly, e.g.
+      "repo:acme/backend:environment:production". A job that declares a GitHub
+      Environment receives the environment form of the subject rather than the ref
+      form, so the two are not interchangeable.
   EOT
   type        = list(string)
 

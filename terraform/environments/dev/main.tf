@@ -89,7 +89,7 @@ module "github_oidc" {
   oidc_provider_arn    = var.github_oidc_provider_arn
 
   subjects = [
-    for repo in var.github_repositories : "repo:${repo}:ref:${var.github_deploy_ref}"
+    for repo in var.github_repositories : "repo:${repo}:environment:${var.github_deploy_environment}"
   ]
 
   ecr_repository_arns = values(module.ecr.repository_arns)
