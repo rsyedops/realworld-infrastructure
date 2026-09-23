@@ -4,6 +4,9 @@ metadata:
   name: conduit
   labels:
     app.kubernetes.io/part-of: conduit
+    # Selected by the deployment workflow, which applies the prerequisites for
+    # the migration before anything else.
+    conduit/phase: prerequisites
     # Baseline is enough: the workloads need no elevated capabilities, and
     # restricted would reject the upstream nginx image's default securityContext.
     pod-security.kubernetes.io/enforce: baseline

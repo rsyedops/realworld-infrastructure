@@ -3,6 +3,8 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny
+  labels:
+    conduit/phase: prerequisites
 spec:
   podSelector: {}
   policyTypes:
@@ -57,4 +59,29 @@ spec:
         - port: 53
           protocol: UDP
         - port: 53
+          protocol: TCP
+---
+# The migration Job runs before the application and needs the same egress as
+# the backend, and nothing more. Applied with the prerequisites so the policy
+# is in place before the Job's pod starts.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: migrate
+  labels:
+    conduit/phase: prerequisites
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: migrate
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - ports:
+        - port: 5432
           protocol: TCP
