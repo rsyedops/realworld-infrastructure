@@ -64,5 +64,8 @@ resource "helm_release" "external_secrets" {
     value = "true"
   }
 
-  depends_on = [module.eks]
+  depends_on = [
+    module.eks,
+    helm_release.aws_load_balancer_controller,
+  ]
 }
