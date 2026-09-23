@@ -92,8 +92,6 @@ data "aws_iam_policy_document" "terraform" {
 
   # EKS, RDS and the load balancer controller each create a service-linked role
   # on first use.
-  # Creating a managed node group makes EKS look up its own service-linked role
-  # before creating it, so the read has to reach the aws-service-role path.
   statement {
     sid    = "ServiceLinkedRoles"
     effect = "Allow"
@@ -102,6 +100,36 @@ data "aws_iam_policy_document" "terraform" {
       "iam:GetRole",
     ]
     resources = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/*"]
+  }
+
+  # Creating a managed node group makes EKS check whether its own service-linked
+  # role already exists. That check authorises iam:GetRole against the role ARN
+  # without the aws-service-role path, so the path-scoped statement above does
+  # not cover it and the node group fails to create.
+  statement {
+    sid       = "ReadNodegroupServiceLinkedRole"
+    effect    = "Allow"
+    actions   = ["iam:GetRole"]
+    resources = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/AWSServiceRoleForAmazonEKSNodegroup"]
+  }
+
+  # The observability module manages CloudWatch alarms over their full
+  # lifecycle: create and update (PutMetricAlarm), refresh (DescribeAlarms and
+  # ListTagsForResource), tag drift (TagResource, UntagResource) and destroy
+  # (DeleteAlarms). All six accept the alarm resource type, so they stay scoped
+  # to this project's alarm names.
+  statement {
+    sid    = "Alarms"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:DeleteAlarms",
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:ListTagsForResource",
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:TagResource",
+      "cloudwatch:UntagResource",
+    ]
+    resources = ["arn:${data.aws_partition.current.partition}:cloudwatch:${var.region}:${data.aws_caller_identity.current.account_id}:alarm:${var.project}-*"]
   }
 
   statement {
