@@ -131,12 +131,29 @@ variable "db_skip_final_snapshot" {
 }
 
 variable "github_repositories" {
-  description = "owner/name of the repositories allowed to deploy through OIDC."
-  type        = list(string)
+  description = <<-EOT
+      Repositories allowed to deploy through OIDC, keyed by a short label. GitHub
+      issues subjects carrying the numeric IDs of the owner and the repository, so
+      both are recorded next to the names they belong to.
+  EOT
+  type = map(object({
+    owner    = string
+    owner_id = string
+    name     = string
+    id       = string
+  }))
 
   validation {
-    condition     = alltrue([for r in var.github_repositories : can(regex("^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$", r))])
-    error_message = "Each entry must be in owner/name form."
+    condition = alltrue([
+      for r in values(var.github_repositories) :
+      can(regex("^[A-Za-z0-9._-]+$", r.owner)) && can(regex("^[A-Za-z0-9._-]+$", r.name))
+    ])
+    error_message = "owner and name must be bare GitHub names, without a slash."
+  }
+
+  validation {
+    condition     = alltrue([for r in values(var.github_repositories) : can(regex("^[0-9]+$", r.owner_id)) && can(regex("^[0-9]+$", r.id))])
+    error_message = "owner_id and id must be numeric."
   }
 }
 

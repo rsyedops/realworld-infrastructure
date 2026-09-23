@@ -88,8 +88,12 @@ module "github_oidc" {
   create_oidc_provider = false
   oidc_provider_arn    = var.github_oidc_provider_arn
 
+  # GitHub issues subjects carrying the immutable numeric IDs of the owner and
+  # the repository, so that renaming either one cannot quietly transfer this
+  # trust to a different repository.
   subjects = [
-    for repo in var.github_repositories : "repo:${repo}:environment:${var.github_deploy_environment}"
+    for repo in values(var.github_repositories) :
+    "repo:${repo.owner}@${repo.owner_id}/${repo.name}@${repo.id}:environment:${var.github_deploy_environment}"
   ]
 
   ecr_repository_arns = values(module.ecr.repository_arns)

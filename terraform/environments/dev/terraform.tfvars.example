@@ -38,10 +38,22 @@ db_skip_final_snapshot   = true
 # ECR repositories still holding demo images must be removable at teardown.
 ecr_force_delete = true
 
-github_repositories = [
-  "your-org/react-vite-frontend",
-  "your-org/express-postgresql-backend",
-]
+# Numeric IDs come from the GitHub API: GET /repos/<owner>/<name> returns
+# owner.id and id.
+github_repositories = {
+  frontend = {
+    owner    = "your-org"
+    owner_id = "000000000"
+    name     = "react-vite-frontend"
+    id       = "0000000000"
+  }
+  backend = {
+    owner    = "your-org"
+    owner_id = "000000000"
+    name     = "express-postgresql-backend"
+    id       = "0000000000"
+  }
+}
 github_deploy_environment = "dev"
 
 # From the bootstrap output oidc_provider_arn.
