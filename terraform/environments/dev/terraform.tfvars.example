@@ -28,7 +28,7 @@ eks_node_groups = {
 cluster_admins = {}
 
 db_instance_class        = "db.t4g.micro"
-db_engine_version        = "16.6"
+db_engine_version        = "16.15"
 db_multi_az              = false
 db_backup_retention_days = 7
 # Demo environment: both are set so the stack can be destroyed cleanly.

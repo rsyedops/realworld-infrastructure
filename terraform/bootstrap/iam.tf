@@ -92,10 +92,15 @@ data "aws_iam_policy_document" "terraform" {
 
   # EKS, RDS and the load balancer controller each create a service-linked role
   # on first use.
+  # Creating a managed node group makes EKS look up its own service-linked role
+  # before creating it, so the read has to reach the aws-service-role path.
   statement {
-    sid       = "ServiceLinkedRoles"
-    effect    = "Allow"
-    actions   = ["iam:CreateServiceLinkedRole"]
+    sid    = "ServiceLinkedRoles"
+    effect = "Allow"
+    actions = [
+      "iam:CreateServiceLinkedRole",
+      "iam:GetRole",
+    ]
     resources = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/*"]
   }
 

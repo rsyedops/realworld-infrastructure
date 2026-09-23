@@ -44,7 +44,7 @@ variable "master_username" {
 variable "engine_version" {
   description = "PostgreSQL engine version."
   type        = string
-  default     = "16.6"
+  default     = "16.15"
 }
 
 variable "instance_class" {
