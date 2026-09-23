@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.9.0"
+  required_version = ">= 1.10.0"
 
   required_providers {
     aws = {
@@ -16,7 +16,8 @@ terraform {
     }
   }
 
-  # State lives in S3 with lockfile-based locking (Terraform 1.9+), so no DynamoDB
-  # table is needed. The bucket and key are supplied by -backend-config at init.
+  # State lives in S3 with lockfile-based locking, so no DynamoDB table is needed.
+  # That is why this root requires Terraform 1.10 or newer; the bucket and key are
+  # supplied by -backend-config at init.
   backend "s3" {}
 }

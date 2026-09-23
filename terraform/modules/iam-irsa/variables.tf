@@ -34,8 +34,14 @@ variable "policy_arns" {
   default     = []
 }
 
+variable "create_inline_policy" {
+  description = "Attach inline_policy_json to the role. Separate from the document itself so the decision is known during planning even when the policy is not."
+  type        = bool
+  default     = false
+}
+
 variable "inline_policy_json" {
-  description = "Inline policy document. Null attaches no inline policy."
+  description = "Inline policy document, used when create_inline_policy is true."
   type        = string
   default     = null
 }

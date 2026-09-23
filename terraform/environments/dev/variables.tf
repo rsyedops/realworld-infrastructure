@@ -88,10 +88,10 @@ variable "eks_node_groups" {
   }
 }
 
-variable "cluster_admin_principals" {
-  description = "IAM principal ARNs granted cluster-admin via EKS access entries."
-  type        = list(string)
-  default     = []
+variable "cluster_admins" {
+  description = "Additional IAM principals granted cluster-admin via EKS access entries, keyed by a stable name."
+  type        = map(string)
+  default     = {}
 }
 
 variable "db_instance_class" {

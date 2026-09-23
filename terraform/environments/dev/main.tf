@@ -43,8 +43,8 @@ module "eks" {
   endpoint_public_access       = true
   endpoint_public_access_cidrs = var.eks_endpoint_public_access_cidrs
 
-  node_groups              = var.eks_node_groups
-  cluster_admin_principals = concat(var.cluster_admin_principals, [module.github_oidc.role_arn])
+  node_groups    = var.eks_node_groups
+  cluster_admins = merge(var.cluster_admins, { github_actions = module.github_oidc.role_arn })
 
   tags = local.common_tags
 }
@@ -57,7 +57,7 @@ module "rds" {
   private_subnet_ids = module.vpc.private_subnet_ids
 
   # Only traffic from a pod in this cluster can reach the database.
-  allowed_security_group_ids = [module.eks.cluster_security_group_id]
+  allowed_security_groups = { eks = module.eks.cluster_security_group_id }
 
   database_name  = replace(var.project, "-", "_")
   engine_version = var.db_engine_version

@@ -84,10 +84,10 @@ variable "node_groups" {
   }
 }
 
-variable "cluster_admin_principals" {
-  description = "IAM principal ARNs granted cluster-admin through EKS access entries."
-  type        = list(string)
-  default     = []
+variable "cluster_admins" {
+  description = "IAM principals granted cluster-admin through EKS access entries, keyed by a stable name. The key identifies each entry during planning, so the ARN itself may only be known at apply."
+  type        = map(string)
+  default     = {}
 }
 
 variable "tags" {

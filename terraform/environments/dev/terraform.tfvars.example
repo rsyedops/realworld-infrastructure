@@ -24,8 +24,8 @@ eks_node_groups = {
   }
 }
 
-# e.g. ["arn:aws:iam::111122223333:role/PlatformEngineer"]
-cluster_admin_principals = []
+# e.g. { platform_engineer = "arn:aws:iam::111122223333:role/PlatformEngineer" }
+cluster_admins = {}
 
 db_instance_class        = "db.t4g.micro"
 db_engine_version        = "16.6"

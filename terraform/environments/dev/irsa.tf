@@ -10,7 +10,8 @@ module "irsa_load_balancer_controller" {
   namespace         = "kube-system"
   service_account   = "aws-load-balancer-controller"
 
-  inline_policy_json = file("${path.module}/policies/aws-load-balancer-controller.json")
+  create_inline_policy = true
+  inline_policy_json   = file("${path.module}/policies/aws-load-balancer-controller.json")
 
   tags = local.common_tags
 }
@@ -57,7 +58,8 @@ module "irsa_external_secrets" {
   namespace       = local.app_namespace
   service_account = "conduit-secrets"
 
-  inline_policy_json = data.aws_iam_policy_document.external_secrets.json
+  create_inline_policy = true
+  inline_policy_json   = data.aws_iam_policy_document.external_secrets.json
 
   tags = local.common_tags
 }

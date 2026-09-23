@@ -18,10 +18,10 @@ variable "private_subnet_ids" {
   }
 }
 
-variable "allowed_security_group_ids" {
-  description = "Security groups permitted to open connections to Postgres."
-  type        = list(string)
-  default     = []
+variable "allowed_security_groups" {
+  description = "Security groups permitted to open connections to Postgres, keyed by a stable name. The key identifies each rule during planning, so the group ID may only be known at apply."
+  type        = map(string)
+  default     = {}
 }
 
 variable "database_name" {

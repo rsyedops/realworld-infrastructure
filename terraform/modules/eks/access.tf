@@ -1,7 +1,7 @@
 # Access entries replace the aws-auth ConfigMap: cluster access becomes IAM state
 # Terraform owns, not a hand-edited object in kube-system.
 resource "aws_eks_access_entry" "admin" {
-  for_each = toset(var.cluster_admin_principals)
+  for_each = var.cluster_admins
 
   cluster_name  = aws_eks_cluster.this.name
   principal_arn = each.value
@@ -11,7 +11,7 @@ resource "aws_eks_access_entry" "admin" {
 }
 
 resource "aws_eks_access_policy_association" "admin" {
-  for_each = toset(var.cluster_admin_principals)
+  for_each = var.cluster_admins
 
   cluster_name  = aws_eks_cluster.this.name
   principal_arn = each.value
