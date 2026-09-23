@@ -2,6 +2,8 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: backend
+  labels:
+    conduit/phase: prerequisites
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -26,6 +28,8 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: frontend
+  labels:
+    conduit/phase: prerequisites
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -50,6 +54,8 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: backend
+  labels:
+    conduit/phase: prerequisites
 spec:
   minAvailable: 1
   selector:
@@ -60,6 +66,8 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: frontend
+  labels:
+    conduit/phase: prerequisites
 spec:
   minAvailable: 1
   selector:

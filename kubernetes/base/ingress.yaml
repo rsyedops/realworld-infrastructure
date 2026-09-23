@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: conduit
+  labels:
+    conduit/phase: prerequisites
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     # IP mode targets pods directly, so the ALB honours pod readiness instead of
